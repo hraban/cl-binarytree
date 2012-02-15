@@ -1,0 +1,12 @@
+.*.swp
+*~
+*.mem
+*.core
+*.bin
+*.pyc
+*.pyo
+\#*#
+.#*
+*.fasl
+build
+bin
