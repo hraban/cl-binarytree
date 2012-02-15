@@ -118,3 +118,32 @@
                  (cons (key node)
                        (extract-all right
                                     tail)))))
+
+(defgeneric minimum (tree))
+
+(defmethod minimum ((tree tree))
+  (minimum (root tree)))
+
+(defmethod minimum ((tree null))
+  NIL)
+
+(defmethod minimum ((tree node))
+  (with-slots (left) tree
+    (if left
+        (minimum left)
+        (key tree))))
+
+(defgeneric maximum (tree))
+
+(defmethod maximum ((tree tree))
+  (maximum (root tree)))
+
+(defmethod maximum ((tree null))
+  NIL)
+
+(defmethod maximum ((tree node))
+  (with-slots (right) tree
+    (if right
+        (maximum right)
+        (key tree))))
+
