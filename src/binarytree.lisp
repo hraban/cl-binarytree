@@ -263,3 +263,15 @@ association list."))
         (delete-node node)
         (error "Key not found: ~S" key)))
   tree)
+
+(defgeneric height (tree))
+
+(defmethod height ((tree tree))
+  (height (root tree)))
+
+(defmethod height ((tree null))
+  (declare (ignore tree))
+  0)
+
+(defmethod height ((tree node))
+  (1+ (max (height (left tree)) (height (right tree)))))
