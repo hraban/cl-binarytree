@@ -182,31 +182,41 @@ association list."))
                                  (the list (extract-all right
                                                         tail)))))))
 
-(defgeneric minimum (tree))
+(defgeneric tree-minimum (tree))
 
-(defmethod minimum ((tree tree))
-  (minimum (root tree)))
+(defmethod tree-minimum ((tree tree))
+  (tree-minimum (root tree)))
 
-(defmethod minimum ((tree null))
+(defmethod tree-minimum ((tree null))
   NIL)
 
-(defmethod minimum ((tree node))
+(defmethod tree-minimum ((tree node))
   (with-slots (left) tree
     (if left
-        (minimum left)
-        (key tree))))
+        (tree-minimum left)
+        tree)))
 
-(defgeneric maximum (tree))
+(defun minimum (x)
+  (let ((node (tree-minimum x)))
+    (when node
+      (cons (key node) (value node)))))
 
-(defmethod maximum ((tree tree))
-  (maximum (root tree)))
+(defgeneric tree-maximum (tree))
 
-(defmethod maximum ((tree null))
+(defmethod tree-maximum ((tree tree))
+  (tree-maximum (root tree)))
+
+(defmethod tree-maximum ((tree null))
   NIL)
 
-(defmethod maximum ((tree node))
+(defmethod tree-maximum ((tree node))
   (with-slots (right) tree
     (if right
-        (maximum right)
-        (key tree))))
+        (tree-maximum right)
+        tree)))
+
+(defun maximum (x)
+  (let ((node (tree-maximum x)))
+    (when node
+      (cons (key node) (value node)))))
 
