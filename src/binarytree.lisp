@@ -157,9 +157,9 @@
            (type node new))
   (insert-node-subtree new (root tree) (rcurry #'initialize-tree tree)))
 
-(defun insert (key tree)
+(defun insert (key tree &optional value)
   (declare (type tree tree))
-  (insert-node (make-node key :tree tree) tree))
+  (insert-node (make-node key :tree tree :value value) tree))
 
 (defgeneric extract-all (tree &optional opt)
   (:documentation "List of all elements in a binary search tree, ordered."))
