@@ -1,6 +1,7 @@
 (defpackage :binarytree
   (:use :common-lisp :alexandria)
-  (:export #:insert
+  (:export #:make-tree
+           #:insert
            #:extract-all
            #:delete
            #:minimum

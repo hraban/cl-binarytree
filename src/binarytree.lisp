@@ -47,6 +47,9 @@
 (defun make-node (key &rest argv)
   (apply #'make-instance 'node :key key argv))
 
+(defun make-tree (&rest argv)
+  (apply #'make-instance 'tree argv))
+
 (defun left-rotate (x &aux (tree x))
   "Rotate two nodes left without violating binary tree constraints:
 
