@@ -3,7 +3,7 @@
   (:export #:make-tree
            #:insert
            #:extract-all
-           #:delete
+           #:delete-key
            #:minimum
            #:maximum
            #:search

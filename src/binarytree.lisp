@@ -220,3 +220,46 @@ association list."))
     (when node
       (cons (key node) (value node)))))
 
+(defun transplant (x y)
+  "Replace the subtree x by subtree y"
+  (declare (type node x)
+           (type (or null node) y))
+  (let ((parent (parent x)))
+    (if parent
+        (if (eq x (left parent))
+            (setf (left parent) y)
+            (setf (right parent) y))
+        (setf (root (tree x)) y))))
+
+(defun delete-node (node)
+  (let ((parent (parent node))
+        (next (tree-minimum (right node))))
+    ;; Find the node that should take the place of the deleted node
+    (let ((new
+           (if next
+               (progn
+                 ;; The minimum can have no left (and thus smaller) child
+                 (assert (null (left next)))
+                 (transplant next (right next))
+                 (setf (left next) (left node))
+                 (setf (right next) (right node))
+                 next)
+               (progn
+                 ;; There is no minimum right element -> there is no right child
+                 (assert (null (right node)))
+                 (left node)))))
+      ;; Set the parent to point to that node
+      (if parent
+          (if (eq node (left parent))
+              (setf (left parent) new)
+              (setf (right parent) new))
+          (setf (root (tree node)) new)))))
+
+(defgeneric delete-key (key tree))
+
+(defmethod delete-key (key (tree tree))
+  (let ((node (search-node key tree)))
+    (if node
+        (delete-node node)
+        (error "Key not found: ~S" key)))
+  tree)
