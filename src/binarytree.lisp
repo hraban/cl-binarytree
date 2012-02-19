@@ -162,7 +162,8 @@
   (insert-node (make-node key :tree tree :value value) tree))
 
 (defgeneric extract-all (tree &optional opt)
-  (:documentation "List of all elements in a binary search tree, ordered."))
+  (:documentation "List of all elements in a binary search tree as an ordered
+association list."))
 
 (defmethod extract-all ((tree tree) &optional _)
   (declare (ignore _))
@@ -174,11 +175,12 @@
 (defmethod extract-all ((node node) &optional tail)
   ;; Inner recursion step can not be transformed to tail recursion but maximum
   ;; stack depth is O(tree-height). Use parent relation for O(1).
+  (declare (type list tail))
   (with-slots (left right) node
-    (extract-all left
-                 (cons (key node)
-                       (extract-all right
-                                    tail)))))
+    (the list (extract-all left
+                           (cons (cons (key node) (value node))
+                                 (the list (extract-all right
+                                                        tail)))))))
 
 (defgeneric minimum (tree))
 
