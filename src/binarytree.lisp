@@ -19,7 +19,10 @@
    (tree
     :initarg :tree
     :type tree
-    :accessor tree)))
+    :accessor tree)
+   (value
+    :initarg :value
+    :accessor value)))
 
 (defclass tree ()
   ((root
