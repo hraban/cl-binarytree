@@ -36,6 +36,11 @@
   (when new
     (setf (parent new) node)))
 
+(defmethod (setf root) :after ((root node) tree)
+  (declare (ignore tree))
+  (when root
+    (setf (parent root) NIL)))
+
 (defun make-node (key &rest argv)
   (apply #'make-instance 'node :key key argv))
 
