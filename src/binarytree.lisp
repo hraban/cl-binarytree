@@ -63,7 +63,7 @@
            (type node x))
   (let ((y (right x))
         (top (parent x)))
-    (unless (parent x)
+    (unless top
       (setf (root tree) y))
     (setf (right x) (left y))
     (setf (left y) x)
@@ -76,7 +76,7 @@
            (type node y))
   (let ((x (left y))
         (top (parent y)))
-    (unless (parent y)
+    (unless top
       (setf (root tree) x))
     (setf (left y) (right x))
     (setf (right x) y)
