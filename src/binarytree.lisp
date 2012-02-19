@@ -288,3 +288,24 @@ association list."))
 (defmethod size ((tree node))
   (with-slots (left right) tree
     (+ 1 (size left) (size right))))
+
+(defgeneric orderedp (tree))
+
+(defmethod orderedp ((tree tree))
+  (orderedp (root tree)))
+
+(defmethod orderedp ((tree null))
+  T)
+
+(defmethod orderedp ((tree node))
+  (with-slots (left right) tree
+    (and (or (null left)
+             (compare-nodes-cont left
+                                 tree
+                                 (curry #'orderedp left)
+                                 (constantly NIL)))
+         (or (null right)
+             (compare-nodes-cont tree
+                                 right
+                                 (curry #'orderedp right)
+                                 (constantly NIL))))))
