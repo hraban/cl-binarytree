@@ -7,6 +7,7 @@
            #:minimum
            #:maximum
            #:extract-value
+           #:extract
            #:predecessor
            #:size
            #:height

@@ -310,11 +310,22 @@ association list."))
                                  (curry #'orderedp right)
                                  (constantly NIL))))))
 
-(defun extract-value (key tree &key not-found)
+(defun node->kvpair (node)
+  (declare (type node node))
+  (with-slots (key value) node
+    (cons key value)))
+
+(defun extract-node (key tree &key not-found)
   (declare (type tree tree))
   (let ((node (search-node key tree)))
     (if node
-        (value node)
+        node
         (ecase not-found
           ((:error) (error "Key not found: ~S" key))
           ((NIL) NIL)))))
+
+(defun extract-value (&rest argv)
+  (value (apply #'extract-node argv)))
+
+(defun extract (&rest argv)
+  (node->kvpair (apply #'extract-node argv)))
