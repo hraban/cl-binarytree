@@ -131,24 +131,31 @@
                        (lambda () (search-node key tree (right subtree)))
                        (constantly subtree))))
 
-(defun insert-node (new tree &optional (current (root tree)) setter)
-  "Insert a new node in the tree. Current indicates the recursion subtree step."
-
+(defun insert-node-subtree (new subtree setter)
+  "Insert a new node in the subtree."
   (declare (type node new)
-           (type tree tree))
-  ;; TODO: Generalize comparison
-  (if current
-      (multiple-value-bind (get-next set-next)
-          (if (<= (key new) (key current))
-              (values #'left #'(setf left))
-              (values #'right #'(setf right)))
-        (insert-node new
-                     tree
-                     (funcall get-next current)
-                     (rcurry set-next current)))
-      (if setter
-          (funcall setter new)
-          (initialize-tree new tree))))
+           (type function setter)
+           (type (or null node) subtree))
+  (assert (or (null subtree) (eq (tree new) (tree subtree))))
+  (if subtree
+      (let ((cont (curry #'insert-node-subtree new)))
+        (compare-nodes-cont new
+                            subtree
+                            (curry cont
+                                   (left subtree)
+                                   (rcurry #'(setf left) subtree))
+                            (curry cont
+                                   (right subtree)
+                                   (rcurry #'(setf right) subtree))
+                            (compose (lambda ()
+                                       (error "Duplicate key: reinserting ~S"
+                                              (key new))))))
+      (funcall setter new)))
+
+(defun insert-node (new tree)
+  (declare (type tree tree)
+           (type node new))
+  (insert-node-subtree new (root tree) (rcurry #'initialize-tree tree)))
 
 (defun insert (key tree)
   (declare (type tree tree))
