@@ -8,5 +8,6 @@
            #:maximum
            #:search
            #:predecessor
+           #:size
            #:height
            #:successor))

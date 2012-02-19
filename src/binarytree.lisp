@@ -275,3 +275,16 @@ association list."))
 
 (defmethod height ((tree node))
   (1+ (max (height (left tree)) (height (right tree)))))
+
+(defgeneric size (tree))
+
+(defmethod size ((tree tree))
+  (size (root tree)))
+
+(defmethod size ((tree null))
+  (declare (ignore tree))
+  0)
+
+(defmethod size ((tree node))
+  (with-slots (left right) tree
+    (+ 1 (size left) (size right))))
