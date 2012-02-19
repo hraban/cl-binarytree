@@ -329,3 +329,40 @@ association list."))
 
 (defun extract (&rest argv)
   (node->kvpair (apply #'extract-node argv)))
+
+(defun find-sided-ancestor (node selector)
+  "The first parent that has this node in its subtree given by this selector"
+  (declare (type node node))
+  (with-slots (parent) node
+    (when parent
+      (if (eq (funcall selector parent) node)
+          parent
+          (find-sided-ancestor parent selector)))))
+
+(defun find-right-parent (node)
+  "The first parent larger than this node"
+  (find-sided-ancestor node #'left))
+
+(defun find-left-parent (node)
+  "The first parent smaller than this node"
+  (find-sided-ancestor node #'right))
+
+(defun successor-node (node)
+  (declare (type node node))
+  (or (tree-minimum (right node))
+      (find-right-parent node)))
+
+(defun predecessor-node (node)
+  (declare (type node node))
+  (or (tree-maximum (left node))
+      (find-left-parent node)))
+
+(defun successor (key tree)
+  (let ((succ (successor-node (extract-node key tree :not-found :error))))
+    (when succ
+      (node->kvpair succ))))
+
+(defun predecessor (key tree)
+  (let ((pre (predecessor-node (extract-node key tree :not-found :error))))
+    (when pre
+      (node->kvpair pre))))
