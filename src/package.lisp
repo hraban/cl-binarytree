@@ -6,7 +6,7 @@
            #:delete-key
            #:minimum
            #:maximum
-           #:search
+           #:extract-value
            #:predecessor
            #:size
            #:height

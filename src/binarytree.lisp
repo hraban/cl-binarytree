@@ -309,3 +309,12 @@ association list."))
                                  right
                                  (curry #'orderedp right)
                                  (constantly NIL))))))
+
+(defun extract-value (key tree &key not-found)
+  (declare (type tree tree))
+  (let ((node (search-node key tree)))
+    (if node
+        (value node)
+        (ecase not-found
+          ((:error) (error "Key not found: ~S" key))
+          ((NIL) NIL)))))
