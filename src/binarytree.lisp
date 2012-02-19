@@ -29,7 +29,13 @@
     :initarg :root
     :initform NIL
     :type (or null node)
-    :accessor root)))
+    :accessor root)
+   (compare
+    :initarg :compare
+    :initform (lambda (x y) (cond ((< x y) -1)
+                                  ((> x y) 1)
+                                  (t 0)))
+    :type function)))
 
 (defmethod (setf left) :after ((new node) (node node))
   (when new
@@ -89,8 +95,45 @@
   (setf (root tree) node)
   tree)
 
+(defun compare-keys (tree x y)
+  (declare (type tree tree))
+  (funcall (slot-value tree 'compare) x y))
+
+(defun compare-nodes (x y)
+  (declare (type node x y))
+  (assert (eq (tree x) (tree y)))
+  (compare-keys (tree x) (key x) (key y)))
+
+(defun compare-keys-cont (tree x y lt gt &optional (eq gt))
+  "Compare given keys and call given functions on appropriate comparison evaluation."
+  (declare (type tree tree)
+           (type function lt gt eq))
+  (funcall
+   (ecase (the (member -1 0 1) (compare-keys tree x y))
+     (-1 lt)
+     (0 eq)
+     (1 gt))))
+
+(defun compare-nodes-cont (x y lt gt &optional (eq gt))
+  "Compare nodes and call continuations appropriately"
+  (declare (type node x y))
+  (assert (eq (tree x) (tree y)))
+  (compare-keys-cont (tree x) (key x) (key y) lt gt eq))
+
+(defun search-node (key tree &optional (subtree (root tree)))
+  (declare (type tree tree)
+           (type (or null node) subtree))
+  (if subtree
+    (compare-keys-cont tree
+                       key
+                       (key subtree)
+                       (lambda () (search-node key tree (left subtree)))
+                       (lambda () (search-node key tree (right subtree)))
+                       (constantly subtree))))
+
 (defun insert-node (new tree &optional (current (root tree)) setter)
   "Insert a new node in the tree. Current indicates the recursion subtree step."
+
   (declare (type node new)
            (type tree tree))
   ;; TODO: Generalize comparison
